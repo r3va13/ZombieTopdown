@@ -34,7 +34,9 @@ public class TheCamera : MonoBehaviour
 
     public Vector2 GetMousePosition()
     {
-        return _camera.ScreenToWorldPoint(Input.mousePosition);
+        Vector3 vector3 =_camera.ScreenToWorldPoint(Input.mousePosition);
+        vector3.z = 0;
+        return vector3;
     }
 
     void Update()

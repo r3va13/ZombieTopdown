@@ -31,12 +31,13 @@ public class LogInController : MonoBehaviour
         ChangeLoginText("Не подключено");
         
         _connectBtn.onClick.AddListener(OnConnectBtn);
+
+        EventManager.LoginEvent += Hide;
     }
 
     public void Show()
     {
         gameObject.SetActive(true);
-        EventManager.LoginEvent += OnConnected;
     }
 
     public void Hide()
@@ -52,11 +53,5 @@ public class LogInController : MonoBehaviour
     public void ChangeLoginText(string text)
     {
         _loginLbl.text = text;
-    }
-
-    void OnConnected()
-    {
-        Hide();
-        RoomController.Instance.Show();
     }
 }

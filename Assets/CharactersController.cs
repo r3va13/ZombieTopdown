@@ -23,6 +23,7 @@ public class CharactersController : MonoBehaviour
     public TheCharacter CreateCharacter()
     {
         TheCharacter created = Instantiate(CharacterPrefab, transform);
+        created.Initialize();
         _characters.Add(created);
         return created;
     }

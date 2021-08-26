@@ -6,6 +6,7 @@ public class LoadController : MonoBehaviour
 {
     void Start()
     {
+        if (RoomController.Instance) ;
         LogInController.Instance.Show();
     }
 }

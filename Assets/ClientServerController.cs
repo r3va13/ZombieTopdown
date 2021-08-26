@@ -22,6 +22,7 @@ public class ClientServerController : MonoBehaviour
     const string IP = "192.168.0.183"; //Дом
     //const string IP = "18.221.164.4"; //Амазон
     string _roomID = "/Lobby";
+    public string RoomID => _roomID;
 
     readonly List<string> _sendList = new List<string>();
 
@@ -87,7 +88,6 @@ public class ClientServerController : MonoBehaviour
         {
             sendCor = StartCoroutine(SendCor());
             LogInController.Instance.ChangeLoginText("Подключено");
-            EventManager.OnLoginEvent();
             _connectAttempt = 0;
         }
 
@@ -123,22 +123,29 @@ public class ClientServerController : MonoBehaviour
         
         switch (args[0])
         {
-            case "connected":
+            case "connected_to_lobby":
                 if (Storage.Instance.ClientID == "") _webSocket.SendString("create_new_player");
+                EventManager.OnLoginEvent();
                 break;
             case "id":
                 Storage.Instance.ClientID = args[1];
                 break;
             case "join_room":
                 RoomController.Instance.Hide();
-                LobbyController.Instance.Show();
+                RoomLobbyController.Instance.Show();
                 ConnectToRoomID(args[1]);
+                break;
+            case "join_lobby":
+                ConnectToRoomID("/Lobby");
                 break;
             case "connected_to_room":
                 _webSocket.SendString("join_room|" + _roomID + "|" + Storage.Instance.ClientID);
                 break;
-            case "refresh_users":
-                LobbyController.Instance.RefreshUsers(args);
+            case "refresh_room":
+                RoomLobbyController.Instance.RefreshRoomUsers(args);
+                break;
+            case "start_game":
+                RoomLobbyController.Instance.StartCountdown(args);
                 break;
         }
         

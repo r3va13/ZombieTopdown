@@ -29,8 +29,10 @@ public class RoomController : MonoBehaviour
     {
         _survivorBtn = transform.Find("ButtonSurvivor").GetComponent<Button>();
         _zombieBtn = transform.Find("ButtonZombie").GetComponent<Button>();
-        _survivorBtn.onClick.AddListener(FindGameSurvivor);
-        _zombieBtn.onClick.AddListener(FindGameZombie);
+        _survivorBtn.onClick.AddListener(FindRoomSurvivor);
+        _zombieBtn.onClick.AddListener(FindRoomZombie);
+
+        EventManager.LoginEvent += Show;
     }
 
     public void Show()
@@ -43,13 +45,13 @@ public class RoomController : MonoBehaviour
         gameObject.SetActive(false);
     }
     
-    void FindGameSurvivor()
+    void FindRoomSurvivor()
     {
-        ClientServerController.Instance.Send("find_game|survivor|" + Storage.Instance.ClientID);
+        ClientServerController.Instance.Send("find_room|survivor|" + Storage.Instance.ClientID);
     }
     
-    void FindGameZombie()
+    void FindRoomZombie()
     {
-        ClientServerController.Instance.Send("find_game|zombie|" + Storage.Instance.ClientID);
+        ClientServerController.Instance.Send("find_room|zombie|" + Storage.Instance.ClientID);
     }
 }

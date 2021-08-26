@@ -28,18 +28,22 @@ public class PlayerController : MonoBehaviour
         _playerCharacter = playerCharacter;
     }
 
+    float playerX = 0;
+    float playerY = 0;
     void Update()
     {
-        float playerX = 0;
-        float playerY = 0;
+        playerX = 0;
+        playerY = 0;
         
         if (Input.GetKey(KeyCode.D)) playerX += MoveSpeed;
         if (Input.GetKey(KeyCode.A)) playerX -= MoveSpeed;
         if (Input.GetKey(KeyCode.W)) playerY += MoveSpeed;
         if (Input.GetKey(KeyCode.S)) playerY -= MoveSpeed;
 
-        _playerCharacter.SetPosition(new Vector2(playerX, playerY));
+        if(playerX != 0 || playerY != 0) _playerCharacter.SetPosition(new Vector2(playerX, playerY));
         
         _playerCharacter.SetLookPosition(TheCamera.Instance.GetMousePosition());
+        
+        if (Input.GetMouseButtonDown(0)) _playerCharacter.Shoot();
     }
 }

@@ -10,7 +10,7 @@ public class CharactersController : MonoBehaviour
     {
         get
         {
-            if (!_instance) _instance = GameController.Instance.transform.Find("Characters").GetComponent<CharactersController>();
+            if (!_instance) _instance = GameObject.Find("Game").transform.Find("Characters").GetComponent<CharactersController>();
             return _instance;
         }
     }

@@ -144,8 +144,17 @@ public class ClientServerController : MonoBehaviour
             case "refresh_room":
                 RoomLobbyController.Instance.RefreshRoomUsers(args);
                 break;
-            case "start_game":
+            case "join_game":
                 RoomLobbyController.Instance.StartCountdown(args);
+                break;
+            case "create_player":
+                GameController.Instance.CreatePlayer(args);
+                break;
+            case "wait_players":
+                GameController.Instance.WaitPlayers(args);
+                break;
+            case "game_start":
+                GameController.Instance.GameStart(args);
                 break;
         }
         

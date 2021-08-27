@@ -6,20 +6,20 @@ using UnityEngine;
 
 public class TheCharacter : MonoBehaviour
 {
-    public SkinConfig SkinConfig;
+    //public SkinConfig SkinConfig;
     
     Transform _transform;
     public Transform Transform => _transform;
     
-    Transform _gunHolder;
-    Transform _gunUpHolder;
+    //Transform _gunHolder;
+    //Transform _gunUpHolder;
     Transform _holder;
 
-    SpriteRenderer _gunRenderer;
+    /*SpriteRenderer _gunRenderer;
     SpriteRenderer _gunUpRenderer;
     SpriteRenderer _head;
     SpriteRenderer _body;
-    SpriteRenderer _feet;
+    SpriteRenderer _feet;*/
 
     Animator _gunAnimator;
     Animator _feetAnimator;
@@ -35,15 +35,15 @@ public class TheCharacter : MonoBehaviour
     {
         _transform = transform;
         _holder = transform.Find("Holder");
-        _gunHolder = _holder.Find("GunHolder");
+        /*_gunHolder = _holder.Find("GunHolder");
         _gunUpHolder = _holder.Find("GunUpHolder");
         _gunRenderer = _gunHolder.Find("Gun").GetComponent<SpriteRenderer>();
         _gunUpRenderer = _gunUpHolder.Find("GunUp").GetComponent<SpriteRenderer>();
         _head = _holder.Find("Head").GetComponent<SpriteRenderer>();
         _body = _holder.Find("Body").GetComponent<SpriteRenderer>();
-        _feet = _holder.Find("Feet").GetComponent<SpriteRenderer>();
-        _gunAnimator = _gunRenderer.GetComponent<Animator>();
-        _feetAnimator = _feet.GetComponent<Animator>();
+        _feet = _holder.Find("Feet").GetComponent<SpriteRenderer>();*/
+        _gunAnimator = _holder.Find("Gun").GetComponent<Animator>();
+        _feetAnimator = _holder.Find("Feet").GetComponent<Animator>();
     }
 
     public void SetPosition(Vector2 position)
@@ -59,20 +59,20 @@ public class TheCharacter : MonoBehaviour
         _gunTransform.eulerAngles = new Vector3(0f, 0f, _gunTransform.position.y < position.y ? gunAngle : -gunAngle);//немного магии на последок
         _gunUpTransform.eulerAngles = new Vector3(0f, 0f, _gunUpTransform.position.y < position.y ? gunAngle : -gunAngle);//немного магии на последок*/
 
-        Vector3 aimDirection = (position - _gunHolder.position).normalized;
+        Vector3 aimDirection = (position - _holder.position).normalized;
         float angle = Mathf.Atan2(aimDirection.y, aimDirection.x) * Mathf.Rad2Deg;
-        _gunHolder.eulerAngles = _gunUpHolder.eulerAngles = new Vector3(0, 0, angle);
+        _holder.eulerAngles = new Vector3(0, 0, angle);
 
-        bool isLeft = angle <= -90 || angle >= 90;
+        //bool isLeft = angle <= -90 || angle >= 90;
         
         //transform.localScale = _gunHolder.localScale = new Vector3((angle <= -90 || angle >= 90) ? -1 : 1, 1, 1);
 
-        _head.flipX = _body.flipX = _feet.flipX = isLeft;
-        _gunRenderer.flipY = _gunUpRenderer.flipY = (angle <= -90 || angle >= 90);
+        //_head.flipX = _body.flipX = _feet.flipX = isLeft;
+        //_gunRenderer.flipY = _gunUpRenderer.flipY = (angle <= -90 || angle >= 90);
         
         //Debug.Log(angle);
 
-        LookSide lookSide = LookSide.Up;
+       /* LookSide lookSide = LookSide.Up;
 
         if (angle < -40 && angle > -140) lookSide = LookSide.Down;
         if (angle < 40 || angle > 140) lookSide = LookSide.Side;
@@ -92,12 +92,12 @@ public class TheCharacter : MonoBehaviour
                 _gunRenderer.transform.localPosition = new Vector3(_gunRenderer.transform.localPosition.x, _gunRenderer.transform.localPosition.y, 0f);
                 break;
             default: throw new ArgumentOutOfRangeException();
-        }
+        }*/
     }
 
     public void Shoot()
     {
         _gunAnimator.SetTrigger("Shoot");
-        UtilsClass.ShakeCamera(0.01f, 0.2f);
+        UtilsClass.ShakeCamera(0.05f, 0.2f);
     }
 }

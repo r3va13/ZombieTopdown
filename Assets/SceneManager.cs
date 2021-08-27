@@ -6,12 +6,15 @@ using UnityEngine.SceneManagement;
 public class SceneManager : MonoBehaviour
 {
 #region Singleton
+
+    public static bool Initialized;
     static SceneManager _instance;
     public static SceneManager Instance
     {
         get
         {
             if (!_instance) _instance = GameObject.Find("Root").GetComponent<SceneManager>();
+            Initialized = true;
             return _instance;
         }
     }

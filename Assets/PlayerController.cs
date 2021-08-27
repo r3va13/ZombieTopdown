@@ -19,7 +19,7 @@ public class PlayerController : MonoBehaviour
     TheCharacter _playerCharacter;
     public TheCharacter PlayerCharacter => _playerCharacter;
 
-    const float MoveSpeed = 1f;
+    const float MoveSpeed = 5f;
 
     
     

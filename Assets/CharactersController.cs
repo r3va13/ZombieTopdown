@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -18,13 +19,14 @@ public class CharactersController : MonoBehaviour
     
     public TheCharacter CharacterPrefab;
     
-    List<TheCharacter> _characters = new List<TheCharacter>();
+    Dictionary<string, TheCharacter> _characters = new Dictionary<string, TheCharacter>();
     
-    public TheCharacter CreateCharacter()
+    public TheCharacter CreateCharacter(string clientID, Vector2 position)
     {
         TheCharacter created = Instantiate(CharacterPrefab, transform);
         created.Initialize();
-        _characters.Add(created);
+        created.transform.localPosition = position;
+        _characters.Add(clientID, created);
         return created;
     }
 }

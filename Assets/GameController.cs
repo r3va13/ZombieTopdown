@@ -31,8 +31,9 @@ public class GameController : MonoBehaviour
         //Запуск просто сцены игры
         if (!SceneManager.Initialized)
         {
-            PlayerController.Instance.Initialize(CharactersController.Instance.CreateCharacter());
+            PlayerController.Instance.Initialize(CharactersController.Instance.CreateCharacter("DebugName", new Vector2(0, 0)));
             TheCamera.Instance.EnableFollowing(PlayerController.Instance.PlayerCharacter.Transform);
+            GameStarted = true;
         }
         //Запуск через сервер
         else
@@ -44,11 +45,17 @@ public class GameController : MonoBehaviour
     public void WaitPlayers(string[] args)
     {
         _waitPlayersTime = Convert.ToDateTime(args[1]);
+        _gameStartTime = Convert.ToDateTime(args[2]);
     }
     
     public void CreatePlayer(string[] args)
     {
+        TheCharacter character = CharactersController.Instance.CreateCharacter(args[1], Utils.GetVector2FromString(args[2]));
+
+        if (args[1] != Storage.Instance.ClientID) return;
         
+        PlayerController.Instance.Initialize(character);
+        TheCamera.Instance.EnableFollowing(PlayerController.Instance.PlayerCharacter.Transform);
     }
 
     public void GameStart(string[] args)
@@ -64,16 +71,19 @@ public class GameController : MonoBehaviour
             if (DateTime.UtcNow < _waitPlayersTime)
             {
                 TimeSpan ts = _waitPlayersTime - DateTime.UtcNow;
-                _messageLbl.text = "Ожидание игроков " + ts.ToString();
+                _messageLbl.text = "Ожидание игроков " + ts.ToString("ss");
                 return;
             }
-            
+
             if (DateTime.UtcNow < _gameStartTime)
             {
                 TimeSpan ts = _gameStartTime - DateTime.UtcNow;
-                _messageLbl.text = "До начала игры " + ts.ToString();
+                _messageLbl.text = "До начала игры " + ts.ToString("ss");
                 return;
             }
+
+            _messageLbl.text = "";
+            GameStarted = true;
         }
     }
 }

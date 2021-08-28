@@ -23,6 +23,5 @@ public class SceneManager : MonoBehaviour
     public void LoadGameScene()
     {
         UnityEngine.SceneManagement.SceneManager.LoadScene(1, LoadSceneMode.Additive);
-        ClientServerController.Instance.Send("game_scene_loaded");
     }
 }

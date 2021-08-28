@@ -85,7 +85,6 @@ public class RoomLobbyController : MonoBehaviour
     {
         if (_startGame)
         {
-            Debug.Log(DateTime.UtcNow + "|" + _gameStartTime);
             TimeSpan ts = _gameStartTime - DateTime.UtcNow;
             _countdownLbl.text = "Игра начнется через " + ts.ToString("ss");
             if (ts.TotalSeconds <= 0)

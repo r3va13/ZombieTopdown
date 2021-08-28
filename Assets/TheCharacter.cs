@@ -42,7 +42,7 @@ public class TheCharacter : MonoBehaviour
         float normalizedMoveAngle = NormalizeAngle(angle);
         float normalizedLookAngle = NormalizeAngle(_holder.eulerAngles.z);
         float diff = Math.Abs(normalizedMoveAngle - normalizedLookAngle);
-        if (diff >= 70 && diff <= 110) _feetAnimator.SetBool("Strafe", true);
+        if ((diff >= 70 && diff <= 110) || (diff <= 290 && diff >= 250)) _feetAnimator.SetBool("Strafe", true);
         else _feetAnimator.SetBool("Strafe", false);
         
         Debug.Log(normalizedMoveAngle + "|" + normalizedLookAngle + "|" + diff);

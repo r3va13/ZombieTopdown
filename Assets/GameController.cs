@@ -18,8 +18,10 @@ public class GameController : MonoBehaviour
     }
 #endregion
 
-    TMP_Text _messageLbl;
+    public static bool ServerOk;
     
+    TMP_Text _messageLbl;
+
     public static bool GameStarted;
     DateTime _waitPlayersTime;
     DateTime _gameStartTime;
@@ -31,6 +33,7 @@ public class GameController : MonoBehaviour
         //Запуск просто сцены игры
         if (!SceneManager.Initialized)
         {
+            ServerOk = false;
             PlayerController.Instance.Initialize(CharactersController.Instance.CreateCharacter("DebugName", new Vector2(0, 0)));
             TheCamera.Instance.EnableFollowing(PlayerController.Instance.PlayerCharacter.Transform);
             GameStarted = true;
@@ -38,6 +41,8 @@ public class GameController : MonoBehaviour
         //Запуск через сервер
         else
         {
+            ServerOk = true;
+            enabled = false;
             ClientServerController.Instance.Send("game_scene_loaded");
         }
     }
@@ -46,6 +51,7 @@ public class GameController : MonoBehaviour
     {
         _waitPlayersTime = Convert.ToDateTime(args[1]);
         _gameStartTime = Convert.ToDateTime(args[2]);
+        enabled = true;
     }
     
     public void CreatePlayer(string[] args)

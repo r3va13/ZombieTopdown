@@ -156,6 +156,9 @@ public class ClientServerController : MonoBehaviour
             case "game_start":
                 GameController.Instance.GameStart(args);
                 break;
+            case "user_states":
+                CharactersController.Instance.UserStates(args);
+                break;
         }
         
     }

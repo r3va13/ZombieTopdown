@@ -28,16 +28,14 @@ public class PlayerController : MonoBehaviour
         _playerCharacter = playerCharacter;
     }
 
-    float playerX = 0;
-    float playerY = 0;
     void Update()
     {
         if (!GameController.GameStarted) return;
         
         _playerCharacter.SetLookPosition(TheCamera.Instance.GetMousePosition());
         
-        playerX = 0;
-        playerY = 0;
+        float playerX = 0;
+        float playerY = 0;
         
         if (Input.GetKey(KeyCode.D)) playerX += MoveSpeed;
         if (Input.GetKey(KeyCode.A)) playerX -= MoveSpeed;
@@ -47,5 +45,26 @@ public class PlayerController : MonoBehaviour
         if (playerX != 0 || playerY != 0) _playerCharacter.SetPosition(new Vector3(playerX, playerY));
         
         if (Input.GetMouseButtonDown(0)) _playerCharacter.Shoot();
+        
+        SendStateToServer();
+    }
+
+    float _sendAwait = 0.05f;
+    void SendStateToServer()
+    {
+        if (!GameController.ServerOk) return;
+        
+        if (_sendAwait > 0) _sendAwait -= Time.deltaTime;
+        else
+        {
+            _sendAwait = 0.1f;
+            
+            Vector2 newPosition = _playerCharacter.GetLastFramePosition(out bool havePositionChange);
+        float newRotation = _playerCharacter.GetLastFrameRotation(out bool haveRotationChange);
+        if (havePositionChange || haveRotationChange) ClientServerController.Instance.Send("player_move|" 
+                                                                                           + _playerCharacter.ClientID + "|" +  
+                                                                                           newPosition.x + "_" + newPosition.y + "|" + 
+                                                                                           newRotation);
+        }
     }
 }

@@ -60,7 +60,6 @@ public class TheCharacter : MonoBehaviour
     public void SetPosition(Vector3 position)
     {
         _transform.Translate(position * Time.fixedDeltaTime);
-        //_transform.position = transform.position + (position * 0.1f);
         
         _newPosition = transform.position + (position * 0.1f);
         
@@ -122,22 +121,53 @@ public class TheCharacter : MonoBehaviour
     public void Shoot()
     {
         Vector3 endPoint = _bulletDirectionPoint.position;
-        
-        RaycastHit2D[] hits = Physics2D.RaycastAll(_bulletStartPoint.position, endPoint, 50f);
 
-        foreach (RaycastHit2D raycastHit2D in hits)
+        RaycastHit2D hit = Physics2D.Linecast(_bulletStartPoint.position, endPoint);
+        if (hit)
         {
-            //if (!Blockers.Contains(raycastHit2D.collider.gameObject)) continue;
-                    
-            Debug.Log("Hit " + raycastHit2D.collider.name);
-            endPoint = raycastHit2D.point;
-            break;
+            Debug.Log("Hit " + hit.collider.name);
+            endPoint = hit.point;
         }
-        
-        Debug.DrawLine(_bulletStartPoint.position, endPoint, Color.green, 0.1f);
+
+        //Debug.DrawLine(_bulletStartPoint.position, endPoint, Color.green, 0.1f);
+        CreateBulletTracer(_bulletStartPoint.position, endPoint);
         
         _gunAnimator.SetTrigger("Shoot");
         UtilsClass.ShakeCamera(0.05f, 0.2f);
+    }
+
+    void CreateBulletTracer(Vector3 fromPosition, Vector3 toPosition)
+    {
+        Vector3 direction = (toPosition - fromPosition).normalized;
+        float eulerZ = UtilsClass.GetAngleFromVectorFloat(direction) - 90f;
+        float distance = Vector3.Distance(fromPosition, toPosition);
+        Vector3 tracerSpawnPosition = fromPosition + direction * (distance * 0.5f);
+        Material tmpTracerMaterial = new Material(CharactersController.Instance.BulletTracerMaterial);
+        float bulletDistance = distance < 50f ? distance : 50f;
+        tmpTracerMaterial.SetTextureScale("_MainTex", new Vector2(4f, bulletDistance / 50f));
+        World_Mesh worldMesh = World_Mesh.Create(tracerSpawnPosition, eulerZ, 0.25f, distance, tmpTracerMaterial, null, 10000);
+
+        int frame = 0;
+        float framerate = 0.035f;
+        float timer = framerate;
+        
+        FunctionUpdater.Create(() =>
+        {
+            timer -= Time.deltaTime;
+            if (timer <= 0)
+            {
+                frame++;
+                timer += framerate;
+                if (frame >= 4)
+                {
+                    worldMesh.DestroySelf();
+                    return true;
+                }
+                else tmpTracerMaterial.SetColor("_Color", new Color(0.78f, 0.78f, 0.35f, 1f - 0.25f * frame));
+            }
+
+            return false;
+        });
     }
 
     void FixedUpdate()
@@ -147,9 +177,6 @@ public class TheCharacter : MonoBehaviour
             _transform.position = Vector3.Lerp(_oldPosition, _newPosition, _serverMoveTime);
             float angle = Mathf.LerpAngle(_oldRotation , _newRotation, _serverMoveTime);
             _holder.eulerAngles = new Vector3(0, 0, angle);
-            //transform.eulerAngles = new Vector3(0, angle, 0);
-            //_holder.rotation = Quaternion.Lerp(new Quaternion(0, 0, _oldRotation, 0), new Quaternion(0, 0, _newRotation, 0), _serverMoveTime);
-            //_holder.eulerAngles = Vector3.Lerp(new Vector3(0,0, _oldRotation), new Vector3(0,0, _newRotation), _serverMoveTime);
             _serverMoveTime += Time.deltaTime * 10;
         }
 

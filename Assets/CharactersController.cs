@@ -16,7 +16,8 @@ public class CharactersController : MonoBehaviour
         }
     }
 #endregion
-    
+
+    public Material BulletTracerMaterial;
     public TheCharacter CharacterPrefab;
     
     Dictionary<string, TheCharacter> _characters = new Dictionary<string, TheCharacter>();

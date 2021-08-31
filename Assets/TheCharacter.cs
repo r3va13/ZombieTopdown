@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using CodeMonkey.Utils;
 using UnityEngine;
 
-public class TheCharacter : MonoBehaviour
+public class TheCharacter : ServerControlledCharacter
 {
-    public string ClientID;
+    public WeaponConfig WeaponConfig;
     
     Transform _transform;
     public Transform Transform => _transform;
@@ -18,6 +18,10 @@ public class TheCharacter : MonoBehaviour
     Animator _feetAnimator;
     float _runTurnOffTime;
     float _serverMoveTime;
+    
+    float _weaponFireRateTimer;
+    float _weaponReloadTimer;
+    int _weaponAmmo;
     
     //Server
     Vector2 _oldPosition;
@@ -41,6 +45,7 @@ public class TheCharacter : MonoBehaviour
         _oldRotation = _newRotation = _holder.eulerAngles.z;
 
         _serverMoveTime = 100;
+        _weaponAmmo = WeaponConfig.LoadAmmo;
     }
 
     public Vector2 GetLastFramePosition(out bool haveChange)
@@ -120,6 +125,10 @@ public class TheCharacter : MonoBehaviour
 
     public void Shoot()
     {
+        if (_weaponFireRateTimer > 0) return;
+        if (_weaponReloadTimer > 0) return;
+        if (_weaponAmmo <= 0) return;
+        
         Vector3 endPoint = _bulletDirectionPoint.position;
 
         RaycastHit2D hit = Physics2D.Linecast(_bulletStartPoint.position, endPoint);
@@ -134,6 +143,11 @@ public class TheCharacter : MonoBehaviour
         
         _gunAnimator.SetTrigger("Shoot");
         UtilsClass.ShakeCamera(0.05f, 0.2f);
+
+        _weaponFireRateTimer = WeaponConfig.FireRate;
+        _weaponAmmo--;
+
+        if (_weaponAmmo <= 0) _weaponReloadTimer = WeaponConfig.ReloadTime;
     }
 
     void CreateBulletTracer(Vector3 fromPosition, Vector3 toPosition)
@@ -186,6 +200,14 @@ public class TheCharacter : MonoBehaviour
             _feetAnimator.SetBool("Run", false);
             _bodyAnimator.SetBool("Run", false);
             _feetAnimator.SetBool("Strafe", false);
+        }
+
+        if (_weaponFireRateTimer >= 0) _weaponFireRateTimer -= Time.deltaTime;
+        if (_weaponReloadTimer > 0) _weaponReloadTimer -= Time.deltaTime;
+        if (_weaponReloadTimer < 0)
+        {
+            _weaponAmmo = WeaponConfig.LoadAmmo;
+            _weaponReloadTimer = 0;
         }
     }
 }

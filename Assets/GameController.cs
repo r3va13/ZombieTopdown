@@ -36,6 +36,7 @@ public class GameController : MonoBehaviour
             ServerOk = false;
             PlayerController.Instance.Initialize(CharactersController.Instance.CreateCharacter("DebugName", new Vector2(0, 0)));
             TheCamera.Instance.EnableFollowing(PlayerController.Instance.PlayerCharacter.Transform);
+            ZombiesController.Instance.OnLocalGameStart();
             GameStarted = true;
         }
         //Запуск через сервер

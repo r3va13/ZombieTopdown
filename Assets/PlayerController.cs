@@ -44,7 +44,7 @@ public class PlayerController : MonoBehaviour
 
         if (playerX != 0 || playerY != 0) _playerCharacter.SetPosition(new Vector3(playerX, playerY));
         
-        if (Input.GetMouseButtonDown(0)) _playerCharacter.Shoot();
+        if (Input.GetMouseButton(0)) _playerCharacter.Shoot();
         
         SendStateToServer();
     }

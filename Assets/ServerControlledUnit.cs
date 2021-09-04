@@ -8,6 +8,7 @@ public class ServerControlledUnit : MonoBehaviour
 {
     public string ClientID { get; set; }
     public Transform Transform => _transform;
+    public Rigidbody2D Rigidbody2D;
 
     Transform _transform;
     protected Transform Holder;
@@ -26,6 +27,7 @@ public class ServerControlledUnit : MonoBehaviour
     public virtual void Initialize()
     {
         _transform = transform;
+        Rigidbody2D = GetComponent<Rigidbody2D>();
         Health = GetComponent<TheHealth>();
         Holder = _transform.Find("Holder");
         
@@ -35,17 +37,29 @@ public class ServerControlledUnit : MonoBehaviour
         _serverMoveDelayTime = 100;
     }
     
-    public virtual void SetPositionFromServer(Vector3 position)
+    public virtual void InitializePositionFromServer(Vector3 position)
     {
-        OldPosition = _transform.position;
+        Transform.position = position;
+        OldPosition = NewPosition = _transform.position;
+    }
+
+    public virtual void InitializeLookDirectionFromServer(float angle)
+    {
+        Rigidbody2D.MoveRotation(angle);
+        OldRotation = NewRotation = angle;
+    }
+    
+    public virtual void SetServerPosition(Vector3 position)
+    {
+        OldPosition = Rigidbody2D.position;
         NewPosition = position;
         _serverMoveDelayTime = 0f;
         WalkTurnOffTime = 0.1f;
     }
-    
-    public void SetServerLookPosition(float angle)
+
+    public void SetServerLookAngle(float angle)
     {
-        OldRotation = Holder.eulerAngles.z;
+        OldRotation = Rigidbody2D.rotation;
         NewRotation = angle;
     }
 
@@ -60,9 +74,9 @@ public class ServerControlledUnit : MonoBehaviour
     {
         if (_serverMoveDelayTime < 0 || _serverMoveDelayTime > 1) return;
         
-        _transform.position = Vector3.Lerp(OldPosition, NewPosition, _serverMoveDelayTime);
+        Rigidbody2D.MovePosition(Vector3.Lerp(OldPosition, NewPosition, _serverMoveDelayTime));
         float angle = Mathf.LerpAngle(OldRotation , NewRotation, _serverMoveDelayTime);
-        Holder.eulerAngles = new Vector3(0, 0, angle);
+        Rigidbody2D.MoveRotation(angle);
         _serverMoveDelayTime += Time.deltaTime * 10;
     }
 }

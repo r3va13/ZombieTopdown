@@ -7,14 +7,10 @@ using UnityEngine;
 public class TheCharacter : ServerControlledUnit
 {
     public LayerMask RaycastLayers;
-    public WeaponConfig WeaponConfig;
+    Weapon _weapon;
     
     Transform _bulletStartPoint, _bulletDirectionPoint;
     Animator _gunAnimator, _bodyAnimator, _feetAnimator;
-    
-    float _weaponFireRateTimer;
-    float _weaponReloadTimer;
-    int _weaponAmmo;
     
     public override void Initialize()
     {
@@ -26,8 +22,24 @@ public class TheCharacter : ServerControlledUnit
 
         _bulletStartPoint = _gunAnimator.transform.Find("BulletStartPoint");
         _bulletDirectionPoint = _gunAnimator.transform.Find("BulletDirectionPoint");
+    }
 
-        _weaponAmmo = WeaponConfig.LoadAmmo;
+    public void SetWeapon(string configArgs)
+    {
+        string[] args = configArgs.Split('_');
+        
+        _weapon = new Weapon(Convert.ToInt32(args[0]),
+            Convert.ToSingle(args[1]),
+            Convert.ToInt32(args[2]),
+            Convert.ToInt32(args[3]),
+            Convert.ToSingle(args[4]));
+    }
+
+    public void ShootFromServer(string directionString)
+    {
+        string[] args = directionString.Split('_');
+
+        AnimateShoot(new Vector2(Convert.ToSingle(args[0]), Convert.ToSingle(args[1])));
     }
 
     public Vector2 GetLastFramePosition(out bool haveChange)
@@ -47,7 +59,8 @@ public class TheCharacter : ServerControlledUnit
 
     public void SetPosition(Vector3 position)
     {
-        Transform.Translate(position * Time.fixedDeltaTime);
+        Vector3 movePosition = Transform.position + (position * Time.fixedDeltaTime);
+        Rigidbody2D.MovePosition(movePosition);
         
         NewPosition = transform.position + (position * 0.1f);
         
@@ -64,12 +77,17 @@ public class TheCharacter : ServerControlledUnit
         else _feetAnimator.SetBool("Strafe", false);
     }
 
-    public override void SetPositionFromServer(Vector3 position)
+    public void ClearPredictMoving()
+    {
+        NewPosition = transform.position;
+    }
+
+    public override void SetServerPosition(Vector3 position)
     {
         Vector3 aimDirection = (position - Holder.position).normalized;
         float angle = Mathf.Atan2(aimDirection.y, aimDirection.x) * Mathf.Rad2Deg;
         
-        base.SetPositionFromServer(position);
+        base.SetServerPosition(position);
         
         _feetAnimator.SetBool("Run", true);
         _bodyAnimator.SetBool("Run", true);
@@ -85,37 +103,44 @@ public class TheCharacter : ServerControlledUnit
     {
         Vector3 aimDirection = (position - Holder.position).normalized;
         float angle = Mathf.Atan2(aimDirection.y, aimDirection.x) * Mathf.Rad2Deg;
-        Holder.eulerAngles = new Vector3(0, 0, angle);
+        Rigidbody2D.MoveRotation(angle);
 
         NewRotation = angle;
     }
     
-    public void Shoot()
+    public void ShootLocal()
     {
-        if (_weaponFireRateTimer > 0) return;
-        if (_weaponReloadTimer > 0) return;
-        if (_weaponAmmo <= 0) return;
-        
-        Vector3 endPoint = _bulletDirectionPoint.position;
+        _weapon.TryShoot(OnSuccsessShoot);
 
-        RaycastHit2D hit = Physics2D.Linecast(_bulletStartPoint.position, endPoint, RaycastLayers);
-        if (hit)
+        void OnSuccsessShoot()
         {
-            endPoint = hit.point;
-            TheHealth health = hit.transform.GetComponent<TheHealth>();
-            if (health) health.DoDamage(WeaponConfig.Damage);
-            Debug.DrawLine(_bulletStartPoint.position, endPoint, Color.black, 0.25f);
+            Vector3 endPoint = _bulletDirectionPoint.position;
+
+            if (!GameController.ServerOk)
+            {
+                RaycastHit2D hit = Physics2D.Linecast(_bulletStartPoint.position, endPoint, RaycastLayers);
+                if (hit)
+                {
+                    endPoint = hit.point;
+                    TheHealth health = hit.transform.GetComponent<TheHealth>();
+                    if (health) health.DoDamage(_weapon.Damage);
+                    //Debug.DrawLine(_bulletStartPoint.position, endPoint, Color.black, 0.25f);
+                }
+
+                AnimateShoot(endPoint);
+            }
+            else
+            {
+                ClientServerController.Instance.Send("player_shoot|" + ClientID + "|" + endPoint.x + "_" + endPoint.y);
+            }
         }
+    }
 
+    void AnimateShoot(Vector2 endPoint)
+    {
         Utils.CreateBulletTracer(_bulletStartPoint.position, endPoint);
-        
-        _gunAnimator.SetTrigger("Shoot");
         UtilsClass.ShakeCamera(0.05f, 0.2f);
-
-        _weaponFireRateTimer = WeaponConfig.FireRate;
-        _weaponAmmo--;
-
-        if (_weaponAmmo <= 0) _weaponReloadTimer = WeaponConfig.ReloadTime;
+        _gunAnimator.SetTrigger("Shoot");
     }
 
     protected override void FixedUpdate()
@@ -127,14 +152,6 @@ public class TheCharacter : ServerControlledUnit
             _feetAnimator.SetBool("Run", false);
             _bodyAnimator.SetBool("Run", false);
             _feetAnimator.SetBool("Strafe", false);
-        }
-
-        if (_weaponFireRateTimer >= 0) _weaponFireRateTimer -= Time.deltaTime;
-        if (_weaponReloadTimer > 0) _weaponReloadTimer -= Time.deltaTime;
-        if (_weaponReloadTimer < 0)
-        {
-            _weaponAmmo = WeaponConfig.LoadAmmo;
-            _weaponReloadTimer = 0;
         }
     }
 }

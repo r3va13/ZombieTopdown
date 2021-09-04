@@ -34,6 +34,7 @@ public class GameController : MonoBehaviour
         if (!SceneManager.Initialized)
         {
             ServerOk = false;
+            Application.targetFrameRate = 60;
             PlayerController.Instance.Initialize(CharactersController.Instance.CreateCharacter("DebugName", new Vector2(0, 0)));
             TheCamera.Instance.EnableFollowing(PlayerController.Instance.PlayerCharacter.Transform);
             ZombiesController.Instance.OnLocalGameStart();
@@ -64,6 +65,8 @@ public class GameController : MonoBehaviour
         PlayerController.Instance.Initialize(character);
         TheCamera.Instance.EnableFollowing(PlayerController.Instance.PlayerCharacter.Transform);
     }
+
+
 
     public void GameStart(string[] args)
     {

@@ -19,7 +19,7 @@ public class PlayerController : MonoBehaviour
     TheCharacter _playerCharacter;
     public TheCharacter PlayerCharacter => _playerCharacter;
 
-    const float MoveSpeed = 5f;
+    const float MoveSpeed = 10f;
 
     
     
@@ -43,8 +43,9 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKey(KeyCode.S)) playerY -= MoveSpeed;
 
         if (playerX != 0 || playerY != 0) _playerCharacter.SetPosition(new Vector3(playerX, playerY));
+        else _playerCharacter.ClearPredictMoving();
         
-        if (Input.GetMouseButton(0)) _playerCharacter.Shoot();
+        if (Input.GetMouseButton(0)) _playerCharacter.ShootLocal();
         
         SendStateToServer();
     }
@@ -59,7 +60,7 @@ public class PlayerController : MonoBehaviour
         {
             _sendAwait = 0.1f;
             
-            Vector2 newPosition = _playerCharacter.GetLastFramePosition(out bool havePositionChange);
+        Vector2 newPosition = _playerCharacter.GetLastFramePosition(out bool havePositionChange);
         float newRotation = _playerCharacter.GetLastFrameRotation(out bool haveRotationChange);
         if (havePositionChange || haveRotationChange) ClientServerController.Instance.Send("player_move|" 
                                                                                            + _playerCharacter.ClientID + "|" +  

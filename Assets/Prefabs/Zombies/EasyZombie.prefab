@@ -29,7 +29,6 @@ Transform:
   m_Children:
   - {fileID: 2186597744884287665}
   - {fileID: 1472755071435867741}
-  - {fileID: 5453904903544698162}
   m_Father: {fileID: 95118749841585228}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -219,6 +218,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 6539011702647174556}
+  - {fileID: 5453904903544698162}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -234,6 +234,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: feb19592984579546b9f87648852648e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Rigidbody2D: {fileID: 0}
   Config: {fileID: 11400000, guid: d9e55be32fafcea4198b52e0158ffebe, type: 2}
 --- !u!58 &5635010414443330541
 CircleCollider2D:
@@ -264,14 +265,14 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 50
-  m_LinearDrag: 0
-  m_AngularDrag: 0.05
+  m_LinearDrag: 5
+  m_AngularDrag: 5
   m_GravityScale: 0
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 4
+  m_Constraints: 0
 --- !u!114 &9141773067992373819
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -284,6 +285,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: feb19592984579546b9f87648852648e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Rigidbody2D: {fileID: 0}
   Config: {fileID: 0}
 --- !u!114 &1136945926541117436
 MonoBehaviour:
@@ -309,8 +311,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5453904903544698162}
-  - component: {fileID: 7079741851033175999}
   - component: {fileID: 5217546440350425573}
+  - component: {fileID: 6007504171851475910}
   m_Layer: 0
   m_Name: FieldOfView
   m_TagString: Untagged
@@ -325,39 +327,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4569020417790534249}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 6539011702647174556}
-  m_RootOrder: 2
+  m_Father: {fileID: 95118749841585228}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!68 &7079741851033175999
-EdgeCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4569020417790534249}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_EdgeRadius: 0
-  m_Points:
-  - {x: 0, y: 0}
-  - {x: 5, y: -30}
-  - {x: 50, y: -50}
-  - {x: 50, y: 50}
-  - {x: 5, y: 30}
-  - {x: 0, y: 0}
-  m_AdjacentStartPoint: {x: 0, y: 0}
-  m_AdjacentEndPoint: {x: 0, y: 0}
-  m_UseAdjacentStartPoint: 0
-  m_UseAdjacentEndPoint: 0
 --- !u!114 &5217546440350425573
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -370,6 +346,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ff2a7d678db3d545bf81cc452edb587, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!58 &6007504171851475910
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4569020417790534249}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 10, y: 0}
+  serializedVersion: 2
+  m_Radius: 15
 --- !u!1 &6981324924063074715
 GameObject:
   m_ObjectHideFlags: 0

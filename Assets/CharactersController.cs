@@ -26,10 +26,15 @@ public class CharactersController : MonoBehaviour
     {
         TheCharacter created = Instantiate(CharacterPrefab, transform);
         created.Initialize();
-        created.transform.localPosition = position;
+        created.InitializePositionFromServer(position);
         _characters.Add(clientID, created);
         created.ClientID = clientID;
         return created;
+    }
+    
+    public void SetWeapon(string[] args)
+    {
+        _characters[args[1]].SetWeapon(args[2]);
     }
 
     public void UserStates(string[] args)
@@ -38,6 +43,11 @@ public class CharactersController : MonoBehaviour
         {
             UserMove(args[i]);
         }
+    }
+
+    public void UserShoot(string[] args)
+    {
+        _characters[args[1]].ShootFromServer(args[2]);
     }
 
     void UserMove(string userLine)
@@ -50,8 +60,8 @@ public class CharactersController : MonoBehaviour
         float posX = Convert.ToSingle(args[1]);
         float posY = Convert.ToSingle(args[2]);
         float rotation = Convert.ToSingle(args[3]);
-        _characters[args[0]].SetServerLookPosition(rotation);
-        _characters[args[0]].SetPositionFromServer(new Vector3(posX, posY, 0));
+        _characters[args[0]].SetServerLookAngle(rotation);
+        _characters[args[0]].SetServerPosition(new Vector3(posX, posY, 0));
     }
 
     public static event EventHandler<OnShootEventArgs> OnShoot;

@@ -117,7 +117,7 @@ public class ClientServerController : MonoBehaviour
 
     void OnRecieve(string message)
     {
-        Debug.Log(message);
+        //Debug.Log(message);
         
         string[] args = message.Split('|');
         
@@ -150,6 +150,9 @@ public class ClientServerController : MonoBehaviour
             case "create_player":
                 GameController.Instance.CreatePlayer(args);
                 break;
+            case "set_weapon":
+                CharactersController.Instance.SetWeapon(args);
+                break;
             case "wait_players":
                 GameController.Instance.WaitPlayers(args);
                 break;
@@ -158,6 +161,15 @@ public class ClientServerController : MonoBehaviour
                 break;
             case "user_states":
                 CharactersController.Instance.UserStates(args);
+                break;
+            case "zombie_states":
+                ZombiesController.Instance.SetZombieStates(args);
+                break;
+            case "player_shoot":
+                CharactersController.Instance.UserShoot(args);
+                break;
+            case "zombie_status":
+                ZombiesController.Instance.SetZombieStatus(args);
                 break;
         }
         

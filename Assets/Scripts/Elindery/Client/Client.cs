@@ -1,4 +1,4 @@
-п»їusing System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,8 +7,9 @@ namespace Elindery.Client
 {
     public class Client : MonoBehaviour
     {
-        const string IP = "192.168.0.183"; //Р”РѕРј
-        //const string IP = "18.221.164.4"; //РђРјР°Р·РѕРЅ
+        const string IP = "localhost";
+        //const string IP = "192.168.0.183"; //Дом
+        //const string IP = "18.221.164.4"; //Амазон
 
         static Client Instance => GameObject.Find("Root").GetComponent<Client>();
 
@@ -61,7 +62,7 @@ namespace Elindery.Client
 
         IEnumerator ClientCoroutine()
         {
-            OnDebugMessage?.Invoke(this, "РџРѕРїС‹С‚РєР° СЃРѕРµРґРёРЅРµРЅРёСЏ " + _connectAttempt);
+            OnDebugMessage?.Invoke(this, "Попытка соединения " + _connectAttempt);
 
             _webSocket = new WebSocket(new Uri("ws://" + IP + ":4649" + RoomID));
             Coroutine connectCor = StartCoroutine(_webSocket.Connect());
@@ -78,12 +79,12 @@ namespace Elindery.Client
             {
                 _connectAttempt++;
                 StopCoroutine(connectCor);
-                OnDebugMessage?.Invoke(this, "РќРµ РїРѕРґРєР»СЋС‡РµРЅРѕ");
+                OnDebugMessage?.Invoke(this, "Не подключено");
             }
             else
             {
                 sendCor = StartCoroutine(SendCor());
-                OnDebugMessage?.Invoke(this, "РџРѕРґРєР»СЋС‡РµРЅРѕ");
+                OnDebugMessage?.Invoke(this, "Подключено");
                 _connectAttempt = 0;
             }
 
@@ -106,7 +107,7 @@ namespace Elindery.Client
             }
 
             if (sendCor != null) StopCoroutine(sendCor);
-            OnDebugMessage?.Invoke(this, "РќРµ РїРѕРґРєР»СЋС‡РµРЅРѕ");
+            OnDebugMessage?.Invoke(this, "Не подключено");
 
             Connect();
         }

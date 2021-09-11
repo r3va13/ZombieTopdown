@@ -82,11 +82,14 @@ namespace Elindery.WindowControllers
             _gameStartTime = Convert.ToDateTime(args[1]);
             _startGame = true;
             enabled = true;
+            _startGame = false;
+            Hide();
+            SceneManager.LoadGameScene();
         }
 
         void FixedUpdate()
         {
-            if (!_startGame) return;
+            /*f (!_startGame) return;
         
             TimeSpan ts = _gameStartTime - DateTime.UtcNow;
             _countdownLbl.text = "Игра начнется через " + ts.ToString("ss");
@@ -94,7 +97,7 @@ namespace Elindery.WindowControllers
         
             _startGame = false;
             Hide();
-            SceneManager.LoadGameScene();
+            SceneManager.LoadGameScene();*/
         }
     }
 }

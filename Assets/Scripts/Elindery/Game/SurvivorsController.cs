@@ -64,5 +64,15 @@ namespace Elindery.Game
             _survivors[args[0]].SetServerLookAngle(rotation);
             _survivors[args[0]].SetServerPosition(new Vector3(posX, posY, 0));
         }
+
+        public void SurvivorDamage(string[] args)
+        {
+            _survivors[args[1]].DoDamage(Convert.ToInt32(args[2]));
+        }
+
+        public void SurvivorAmmo(string[] args)
+        {
+            _survivors[args[1]].SetAmmo(Convert.ToInt32(args[2]));
+        }
     }
 }

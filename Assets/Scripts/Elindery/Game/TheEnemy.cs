@@ -8,7 +8,7 @@ namespace Elindery.Game
         ZombieConfig _zombieConfig;
 
         TheSurvivor _target;
-        CircleCollider2D _collider;
+        
         Vector3 _myPosition;
         Vector3 _targetPosition;
         float _targetDistance;
@@ -23,8 +23,7 @@ namespace Elindery.Game
         public void Initialize(ZombieConfig zombieConfig)
         {
             base.Initialize();
-
-            _collider = GetComponent<CircleCollider2D>();
+            
             _feetAnimator = Holder.Find("Feet").GetComponent<Animator>();
             _bodyHolderAnimator = Holder.Find("BodyHolder").GetComponent<Animator>();
             _bodyAnimator = _bodyHolderAnimator.transform.Find("Body").GetComponent<Animator>();
@@ -69,12 +68,15 @@ namespace Elindery.Game
                 case "stun":
                     OnStun();
                     break;
+                case "attack":
+                    OnAttack();
+                    break;
             }
         }
 
         void OnDie()
         {
-            _collider.enabled = false;
+            Collider.enabled = false;
             _feetAnimator.gameObject.SetActive(false);
             _bodyHolderAnimator.enabled = false;
             _bodyAnimator.SetTrigger("Die");
@@ -86,6 +88,11 @@ namespace Elindery.Game
         {
             WalkTurnOffTime = 0;
             _bodyAnimator.SetTrigger("Damage");
+        }
+
+        void OnAttack()
+        {
+            _bodyAnimator.SetTrigger("Attack");
         }
 
 #region NoServer

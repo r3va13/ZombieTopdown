@@ -10,6 +10,7 @@ namespace Elindery.Configs
         public float AttackCooldown = 1.5f;
         public int AttackDamage = 3;
         public float AttackDistance = 2f;
+        public float AttackHitFrameDelay = 0.75f;
         public int StunDamage = 12;
         public float StunCooldown = 3f;
     }

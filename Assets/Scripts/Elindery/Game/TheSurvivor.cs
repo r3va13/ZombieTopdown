@@ -16,6 +16,9 @@ namespace Elindery.Game
 
         public Action OnWeaponChange;
 
+        float _shootTime = 0;
+        public bool IsShootingState => _shootTime > 0; 
+
         public void Initialize(int hp)
         {
             base.Initialize();
@@ -28,6 +31,7 @@ namespace Elindery.Game
             _bulletDirectionPoint = _gunAnimator.transform.Find("BulletDirectionPoint");
         
             Health = new Health(hp, 0);
+            Health.OnDie += OnDie;
         }
 
         public void SetWeaponFromServer(string configArgs)
@@ -94,11 +98,15 @@ namespace Elindery.Game
             Vector3 aimDirection = ((Transform.position + position) - Holder.position).normalized;
             float angle = Mathf.Atan2(aimDirection.y, aimDirection.x) * Mathf.Rad2Deg;
 
-            float normalizedMoveAngle = Utils.NormalizeAngle(angle);
-            float normalizedLookAngle = Utils.NormalizeAngle(Holder.eulerAngles.z);
-            float diff = Math.Abs(normalizedMoveAngle - normalizedLookAngle);
-            if ((diff >= 70 && diff <= 110) || (diff <= 290 && diff >= 250)) _feetAnimator.SetBool("Strafe", true);
-            else _feetAnimator.SetBool("Strafe", false);
+            if (IsShootingState)
+            {
+                float normalizedMoveAngle = Utils.NormalizeAngle(angle);
+                float normalizedLookAngle = Utils.NormalizeAngle(Holder.eulerAngles.z);
+                float diff = Math.Abs(normalizedMoveAngle - normalizedLookAngle);
+                if ((diff >= 70 && diff <= 110) || (diff <= 290 && diff >= 250)) _feetAnimator.SetBool("Strafe", true);
+                else _feetAnimator.SetBool("Strafe", false);
+            }
+            else SetLookAngle(angle);
         }
 
         public override void SetServerPosition(Vector3 position)
@@ -118,17 +126,37 @@ namespace Elindery.Game
             else _feetAnimator.SetBool("Strafe", false);
         }
 
-        public void SetLookPosition(Vector3 position)
+        public void SetLookPosition(Vector3 position, bool instant)
         {
             Vector3 aimDirection = (position - Holder.position).normalized;
             float angle = Mathf.Atan2(aimDirection.y, aimDirection.x) * Mathf.Rad2Deg;
-            Rigidbody2D.MoveRotation(angle);
+            if (!instant) Rigidbody2D.MoveRotation(angle);
+            else Transform.eulerAngles = new Vector3(0,0, angle);
 
             NewRotation = angle;
         }
-    
+        
+        void SetLookAngle(float angle)
+        {
+            Rigidbody2D.rotation = angle;
+            
+            NewRotation = angle;
+        }
+
+        public void DoDamage(int damage)
+        {
+            Health.DoDamage(damage);
+        }
+
+        public void SetAmmo(int ammo)
+        {
+            Weapon.SetAmmoTo(ammo);
+        }
+
         public void PlayerShoot()
         {
+            _shootTime = 1f;
+            
             Weapon.TryShoot(OnSuccsessShoot);
 
             void OnSuccsessShoot()
@@ -158,13 +186,26 @@ namespace Elindery.Game
         {
             Utils.CreateBulletTracer(_bulletStartPoint.position, endPoint);
             UtilsClass.ShakeCamera(0.05f, 0.2f);
+            _shootTime = 1f;
             _gunAnimator.SetTrigger("Shoot");
+        }
+
+        void OnDie()
+        {
+            Collider.enabled = false;
+            _bodyAnimator.SetTrigger("Die");
+            _bodyAnimator.transform.localPosition = new Vector3(0, 0, 0.001f);
+            _feetAnimator.gameObject.SetActive(false);
+            
+            enabled = false;
         }
 
         protected override void FixedUpdate()
         {
             base.FixedUpdate();
 
+            if (_shootTime > 0) _shootTime -= Time.deltaTime;
+            
             if (WalkTurnOffTime > 0) return;
         
             _feetAnimator.SetBool("Run", false);

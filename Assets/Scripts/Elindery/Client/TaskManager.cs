@@ -74,6 +74,27 @@ namespace Elindery.Client
                 case "zombie_status":
                     EnemiesController.Instance.SetZombieStatus(args);
                     break;
+                case "survivor_damage":
+                    SurvivorsController.Instance.SurvivorDamage(args);
+                    break;
+                case "survivor_ammo":
+                    SurvivorsController.Instance.SurvivorAmmo(args);
+                    break;
+                case "container_positions":
+                    ContainerController.Instance.SetContainers(args);
+                    break;
+                case "container_states":
+                    ContainerController.Instance.SetContainerStates(args);
+                    break;
+                case "container_opened":
+                    ContainerController.Instance.SetContainerOpened(args);
+                    break;
+                case "item_created":
+                    ItemsController.Instance.CreateItem(args);
+                    break;
+                case "item_taken":
+                    ItemsController.Instance.TakeItem(args);
+                    break;
             }
         }
     }

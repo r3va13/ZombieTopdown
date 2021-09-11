@@ -12,4 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39a109bed4c01704f9ec0cec7f5272b7, type: 3}
   m_Name: SurvivorConfig
   m_EditorClassIdentifier: 
-  MoveSpeed: 10
+  HP: 30
+  MoveSpeed: 50

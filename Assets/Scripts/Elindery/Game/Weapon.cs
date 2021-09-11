@@ -81,5 +81,11 @@ namespace Elindery.Game
             OnAmmoChanged?.Invoke();
             _state = State.Ready;
         }
+
+        public void SetAmmoTo(int value)
+        {
+            HoldAmmo = value;
+            OnAmmoChanged?.Invoke();
+        }
     }
 }

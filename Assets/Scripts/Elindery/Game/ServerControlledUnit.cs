@@ -10,6 +10,7 @@ namespace Elindery.Game
 
         Transform _transform;
         protected Transform Holder;
+        protected CircleCollider2D Collider;
     
         protected float WalkTurnOffTime;
         float _serverMoveDelayTime = 100; //0.1 сек. для плавной отрисовки движения и поворота с момента получения команды с сервера
@@ -27,6 +28,7 @@ namespace Elindery.Game
             _transform = transform;
             Rigidbody2D = GetComponent<Rigidbody2D>();
             Holder = _transform.Find("Holder");
+            Collider = GetComponent<CircleCollider2D>();
         
             OldPosition = NewPosition = Rigidbody2D.position;
             OldRotation = NewRotation = Rigidbody2D.rotation;
